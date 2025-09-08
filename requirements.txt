@@ -1,5 +1,5 @@
 fastapi==0.115.12
 pikepdf==9.7.0
 python-multipart==0.0.20
-pytest==8.3.5
+pytest==8.4.2
 httpx==0.28.1
