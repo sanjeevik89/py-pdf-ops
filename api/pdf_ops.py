@@ -1,6 +1,6 @@
 from io import BytesIO
 import tempfile
-from pikepdf import Pdf, PasswordError
+from pikepdf import Pdf, PasswordError, PdfError
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import FileResponse, PlainTextResponse
 from typing import List, Optional
@@ -70,13 +70,15 @@ async def compress( file: UploadFile = File(...)):
 
         try:
             pdf = Pdf.open(BytesIO(contents))
-            pdf.save(temp, recompress_flate=True, compress_streams=True)            
-            print(f"Successfully compressed {file} and saved to '{temp}'")
+            pdf.save(temp.name, recompress_flate=True, compress_streams=True)            
+            print(f"Successfully compressed {file} and saved to '{temp.name}'")
             return FileResponse(temp.name, media_type="application/pdf")        
-        except Pdf.PdfError as e:
+        except PdfError as e:
             print(f"Error processing PDF: {e}")
+            raise HTTPException(status_code=400, detail=f"Failed to process PDF: {str(e)}")
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
+            raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
         
     else:
         return { "Error": "Please upload PDF file format only."}
