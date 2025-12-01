@@ -2,6 +2,8 @@ import os
 import pytest
 from fastapi.testclient import TestClient
 from api.pdf_ops import app
+from PIL import Image
+from io import BytesIO
 
 client = TestClient(app)
 
@@ -50,5 +52,30 @@ def test_compress_pdf():
 
 def test_compress_pdf_no_file():
     response = client.post('/compressPdf')
+    assert response.status_code in (400, 422)
+
+def test_images_to_pdf_from_generated_images():
+    # Generate a couple of simple images in memory
+    img1 = Image.new('RGB', (100, 100), color=(255, 0, 0))
+    img2 = Image.new('RGB', (100, 100), color=(0, 255, 0))
+
+    buf1 = BytesIO()
+    buf2 = BytesIO()
+    img1.save(buf1, format='PNG')
+    img2.save(buf2, format='PNG')
+    buf1.seek(0)
+    buf2.seek(0)
+
+    files = [
+        ('files', ('red.png', buf1, 'image/png')),
+        ('files', ('green.png', buf2, 'image/png')),
+    ]
+
+    response = client.post('/imagesToPdf', files=files)
+    assert response.status_code == 200
+    assert response.headers['content-type'] == 'application/pdf'
+
+def test_images_to_pdf_no_files():
+    response = client.post('/imagesToPdf')
     assert response.status_code in (400, 422)
 
