@@ -2,8 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/pdf_ops.py": {
-      "runtime": "python3.12",
-      "maxDuration": 60
+      "runtime": "python3.12"
     }
   },
   "rewrites": [
