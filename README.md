@@ -6,6 +6,7 @@ This deployed a ASGI app using Fast API framework as a serverless vercel functio
 ## Features
 - **/decryptPdf**: Remove password protection from PDF files by providing the correct password.
 - **/compressPdf**: Compress PDF files to reduce their size.
+ - **/imagesToPdf**: Combine multiple images into a single multi-page PDF.
 
 ## Folder Structure
 ```
@@ -37,6 +38,32 @@ This deployed a ASGI app using Fast API framework as a serverless vercel functio
   - `file`: The PDF file to compress (must be `application/pdf`).
 - **Response:** Returns the compressed PDF file.
 - **Failure:** Returns 400/422 for missing file or other errors.
+
+### POST `/imagesToPdf`
+- **Description:** Generate a single PDF from multiple uploaded images.
+- **Form Data:**
+  - `files`: One or more image files. Supported types: `image/jpeg`, `image/png`, `image/webp`, `image/tiff`, `image/bmp`.
+  - `image_mode` (optional): Image mode conversion before PDF creation. Default: `RGB`. Examples: `RGB`, `L`.
+- **Response:** Returns the generated PDF file (`application/pdf`).
+- **Failure:** Returns 400 for unsupported image types or processing errors, 422 if no files are provided.
+
+#### Examples
+Create a PDF from multiple images using curl:
+```bash
+curl -X POST \
+  -F "files=@samples/image1.jpg" \
+  -F "files=@samples/image2.png" \
+  -F "image_mode=RGB" \
+  http://localhost:8000/imagesToPdf --output out.pdf
+```
+
+If deployed without rewrite (under `/api`), the endpoint may be:
+```bash
+curl -X POST \
+  -F "files=@samples/image1.jpg" \
+  -F "files=@samples/image2.png" \
+  https://<your-vercel-host>/api/pdf_ops.py/imagesToPdf --output out.pdf
+```
 
 ## Usage
 
