@@ -1,8 +1,15 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/pdf_ops.py": { "runtime": "@vercel/python@3.12" }
+    "api/pdf_ops.py": {
+      "memory": 3009,
+      "maxDuration": 60
+    }
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": "api/pdf_ops.py" }
+    {
+      "source": "/(.*)",
+      "destination": "api/pdf_ops.py"
+    }
   ]
 }
