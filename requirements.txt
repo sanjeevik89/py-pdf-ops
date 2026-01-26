@@ -1,6 +1,6 @@
 fastapi==0.123.0
 pikepdf==9.7.0
-python-multipart==0.0.20
+python-multipart==0.0.22
 pytest==9.0.1
 httpx==0.28.1
 Pillow==11.0.0
